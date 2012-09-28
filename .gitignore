@@ -10,3 +10,10 @@
 *.lai
 *.la
 *.a
+
+# qmake files and directories
+debug/
+release/
+Makefile
+Makefile.Debug
+Makefile.Release
