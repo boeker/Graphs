@@ -17,3 +17,9 @@ release/
 Makefile
 Makefile.Debug
 Makefile.Release
+moc_*.cpp
+
+# System files
+Thumbs.db
+.DS_Store
+*.app
