@@ -19,6 +19,8 @@ public:
 	void removeEdge(const QString &, const QString &);
 	QString getNodeAt(const QPointF &);
 	void setZValue(const QString &, const qreal &);
+	void setNodeColor(const QString &, const QColor &);
+	const QColor getNodeColor(const QString &) const;
 private:
 	QGraphicsScene *scene;
 	QMap<QString,Node*> map;

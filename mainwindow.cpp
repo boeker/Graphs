@@ -9,6 +9,7 @@
 #include <QFileDialog>
 #include <QRect>
 #include <QGraphicsSceneMouseEvent>
+#include <QColorDialog>
 
 
 MainWindow::MainWindow() {
@@ -19,6 +20,9 @@ MainWindow::MainWindow() {
 	rbRemoveEdge = new QRadioButton("Remove Edge");
 	leNextNodeName = new QLineEdit("A");
 	leNextEdgeQuality = new QLineEdit("1");
+	leSelectedNode = new QLineEdit();
+	leSelectedNode->setReadOnly(true);
+	pbSelectedNodeColor = new QPushButton("Select Color");
 	graphicsView = new QGraphicsView;
 	QRect screen = QApplication::desktop()->screenGeometry();
 	graphicsScene = new QGraphicsScene(0, 0, screen.width()/2, screen.height()/2);
@@ -29,6 +33,7 @@ MainWindow::MainWindow() {
 
 	connect(rbInsertEdge, SIGNAL(pressed()), this, SLOT(resetLastClick()));
 	connect(rbRemoveEdge, SIGNAL(pressed()), this, SLOT(resetLastClick()));
+	connect(pbSelectedNodeColor, SIGNAL(pressed()), this, SLOT(selectNodeColor()));
 
 	menuBar = new QMenuBar(this);
 	fileMenu = menuBar->addMenu("File");
@@ -66,10 +71,13 @@ MainWindow::MainWindow() {
 	nextEdgeGroupBox->setLayout(nextEdgeLayout);
 	sideBarLayout->addWidget(nextEdgeGroupBox);
 
-	/*QVBoxLayout *selectedItemLayout = new QVBoxLayout;
-	QGroupBox *selectedItemGroupBox = new QGroupBox("Selected Item");
-	selectedItemGroupBox->setLayout(selectedItemLayout);
-	sideBarLayout->addWidget(selectedItemGroupBox);*/
+	QVBoxLayout *selectedNodeLayout = new QVBoxLayout;
+	selectedNodeLayout->addWidget(new QLabel("Name:"));
+	selectedNodeLayout->addWidget(leSelectedNode);
+	selectedNodeLayout->addWidget(pbSelectedNodeColor);
+	QGroupBox *selectedNodeGroupBox = new QGroupBox("Selected Node");
+	selectedNodeGroupBox->setLayout(selectedNodeLayout);
+	sideBarLayout->addWidget(selectedNodeGroupBox);
 
 	mainLayout->setMenuBar(menuBar);
 	mainLayout->addLayout(sideBarLayout);
@@ -86,6 +94,9 @@ MainWindow::~MainWindow() {
 
 void MainWindow::gvLeftMousePress(const QPointF &pos) {
 	grabbedNode = graph->getNodeAt(pos);
+	if (!grabbedNode.isEmpty()) {
+		leSelectedNode->setText(grabbedNode);
+	}
 }
 
 void MainWindow::gvLeftMouseRelease() {
@@ -103,15 +114,19 @@ void MainWindow::gvLeftMouseDoubleClick(const QPointF &pos) {
 		QString name = leNextNodeName->text();
 		if (!name.isEmpty() && onlyLetters(name)) {
 			graph->addNode(name, pos);
+			leSelectedNode->setText(name);
 			if (name.length() == 1 && name[0].toLower() != 'z') {
 				name[0] = QChar(name[0].toAscii()+1);
 				leNextNodeName->setText(name);
 			}
 		}
 	} else if (rbRemoveNode->isChecked()) {
-		QString node = graph->getNodeAt(pos);
-		if (!node.isEmpty()) {
-			graph->removeNode(node);
+		QString name = graph->getNodeAt(pos);
+		if (!name.isEmpty()) {
+			graph->removeNode(name);
+			if (name == leSelectedNode->text()) {
+				leSelectedNode->setText("");
+			}
 		}
 	} else if (rbInsertEdge->isChecked()) {
 		QString newClick = graph->getNodeAt(pos);
@@ -139,6 +154,15 @@ void MainWindow::gvLeftMouseDoubleClick(const QPointF &pos) {
 
 void MainWindow::resetLastClick() {
 	lastClick.clear();
+}
+
+void MainWindow::selectNodeColor() {
+	QString name = leSelectedNode->text();
+	if (!name.isEmpty()) {
+		QColor color;
+		color = QColorDialog::getColor(graph->getNodeColor(name), this, "Node Color");
+		graph->setNodeColor(name, color);
+	}
 }
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event) {

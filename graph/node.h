@@ -8,6 +8,7 @@
 #include <QGraphicsEllipseItem>
 #include <QGraphicsTextItem>
 #include <QPointF>
+#include <QColor>
 #include "edge.h"
 
 namespace graph {
@@ -22,6 +23,8 @@ public:
 	void removeEdge(Node *, bool = false);
 	void setZValue(const qreal &);
 	void moveTo(const QPointF &);
+	void setColor(const QColor &);
+	const QColor getColor();
 private:
 	QSet<Edge*> set;
 	QString name;

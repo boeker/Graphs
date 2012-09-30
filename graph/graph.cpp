@@ -58,4 +58,12 @@ QString Graph::getNodeAt(const QPointF &pos) { //probably slow
 void Graph::setZValue(const QString &name, const qreal &val) {
 	map.value(name)->setZValue(val);
 }
+
+void Graph::setNodeColor(const QString &name, const QColor &color) {
+	map.value(name)->setColor(color);
+}
+
+const QColor Graph::getNodeColor(const QString &name) const {
+	return map.value(name)->getColor();
+}
 }

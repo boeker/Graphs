@@ -8,6 +8,7 @@
 #include <QMenuBar>
 #include <QMenu>
 #include <QAction>
+#include <QPushButton>
 #include "graph/graph.h"
 
 class MainWindow : public QWidget {
@@ -21,6 +22,7 @@ public:
 	void gvLeftMouseDoubleClick(const QPointF &);
 public slots:
 	void resetLastClick();
+	void selectNodeColor();
 protected:
 	bool eventFilter(QObject *, QEvent *);
 private slots:
@@ -38,6 +40,8 @@ private:
 	QRadioButton *rbRemoveEdge;
 	QLineEdit *leNextNodeName;
 	QLineEdit *leNextEdgeQuality;
+	QLineEdit *leSelectedNode;
+	QPushButton *pbSelectedNodeColor;
 	QGraphicsView *graphicsView;
 	QGraphicsScene *graphicsScene;
 	graph::Graph *graph;

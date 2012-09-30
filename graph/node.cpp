@@ -1,6 +1,7 @@
 #include "node.h"
 
 #include <QLineF>
+#include <QBrush>
 
 namespace graph {
 Node::Node(QGraphicsScene *scene,
@@ -90,5 +91,13 @@ void Node::moveTo(const QPointF &pos) {
 		linepos.setP2(QPointF(toPos.x()+RADIUS, toPos.y()+RADIUS));
 		(*it)->moveTo(linepos);
 	}
+}
+
+void Node::setColor(const QColor &color) {
+	graphicsItem->setBrush(color);
+}
+
+const QColor Node::getColor() {
+	return graphicsItem->brush().color();
 }
 }
