@@ -42,6 +42,14 @@ void Graph::removeEdge(const QString &l, const QString &r) {
 	}
 }
 
+bool Graph::edgeExists(const QString &l, const QString &r) {
+	if (map.value(l)->getEdgeTo(map.value(r)) != 0) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 QString Graph::getNodeAt(const QPointF &pos) { //probably slow
 	QGraphicsItem *item = scene->itemAt(pos);
 	const QList<Node*> nodeList = map.values();
@@ -65,5 +73,13 @@ void Graph::setNodeColor(const QString &name, const QColor &color) {
 
 const QColor Graph::getNodeColor(const QString &name) const {
 	return map.value(name)->getColor();
+}
+
+void Graph::setEdgeColor(const QString &l, const QString &r, const QColor &color) {
+	map.value(l)->setEdgeColor(map.value(r), color);
+}
+
+const QColor Graph::getEdgeColor(const QString &l, const QString &r) {
+	return map.value(l)->getEdgeColor(map.value(r));
 }
 }

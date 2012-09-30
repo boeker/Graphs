@@ -23,6 +23,8 @@ public:
 public slots:
 	void resetLastClick();
 	void selectNodeColor();
+	void selectEdgeColor();
+	void newNodeSelected(const QString &);
 protected:
 	bool eventFilter(QObject *, QEvent *);
 private slots:
@@ -41,7 +43,10 @@ private:
 	QLineEdit *leNextNodeName;
 	QLineEdit *leNextEdgeQuality;
 	QLineEdit *leSelectedNode;
-	QPushButton *pbSelectedNodeColor;
+	QLineEdit *leFromNode;
+	QLineEdit *leToNode;
+	QPushButton *pbSelectNodeColor;
+	QPushButton *pbSelectEdgeColor;
 	QGraphicsView *graphicsView;
 	QGraphicsScene *graphicsScene;
 	graph::Graph *graph;

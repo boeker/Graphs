@@ -22,7 +22,12 @@ MainWindow::MainWindow() {
 	leNextEdgeQuality = new QLineEdit("1");
 	leSelectedNode = new QLineEdit();
 	leSelectedNode->setReadOnly(true);
-	pbSelectedNodeColor = new QPushButton("Select Color");
+	leToNode = new QLineEdit();
+	leToNode->setReadOnly(true);
+	leFromNode = new QLineEdit();
+	leFromNode->setReadOnly(true);
+	pbSelectNodeColor = new QPushButton("Select Color");
+	pbSelectEdgeColor = new QPushButton("Select Color");
 	graphicsView = new QGraphicsView;
 	QRect screen = QApplication::desktop()->screenGeometry();
 	graphicsScene = new QGraphicsScene(0, 0, screen.width()/2, screen.height()/2);
@@ -33,7 +38,9 @@ MainWindow::MainWindow() {
 
 	connect(rbInsertEdge, SIGNAL(pressed()), this, SLOT(resetLastClick()));
 	connect(rbRemoveEdge, SIGNAL(pressed()), this, SLOT(resetLastClick()));
-	connect(pbSelectedNodeColor, SIGNAL(pressed()), this, SLOT(selectNodeColor()));
+	connect(pbSelectNodeColor, SIGNAL(pressed()), this, SLOT(selectNodeColor()));
+	connect(pbSelectEdgeColor, SIGNAL(pressed()), this, SLOT(selectEdgeColor()));
+	connect(leSelectedNode, SIGNAL(textChanged(const QString &)), this, SLOT(newNodeSelected(const QString &)));
 
 	menuBar = new QMenuBar(this);
 	fileMenu = menuBar->addMenu("File");
@@ -74,10 +81,20 @@ MainWindow::MainWindow() {
 	QVBoxLayout *selectedNodeLayout = new QVBoxLayout;
 	selectedNodeLayout->addWidget(new QLabel("Name:"));
 	selectedNodeLayout->addWidget(leSelectedNode);
-	selectedNodeLayout->addWidget(pbSelectedNodeColor);
+	selectedNodeLayout->addWidget(pbSelectNodeColor);
 	QGroupBox *selectedNodeGroupBox = new QGroupBox("Selected Node");
 	selectedNodeGroupBox->setLayout(selectedNodeLayout);
 	sideBarLayout->addWidget(selectedNodeGroupBox);
+
+	QVBoxLayout *selectedEdgeLayout = new QVBoxLayout;
+	selectedEdgeLayout->addWidget(new QLabel("From:"));
+	selectedEdgeLayout->addWidget(leFromNode);
+	selectedEdgeLayout->addWidget(new QLabel("To:"));
+	selectedEdgeLayout->addWidget(leToNode);
+	selectedEdgeLayout->addWidget(pbSelectEdgeColor);
+	QGroupBox *selectedEdgeGroupBox = new QGroupBox("Selected Edge");
+	selectedEdgeGroupBox->setLayout(selectedEdgeLayout);
+	sideBarLayout->addWidget(selectedEdgeGroupBox);
 
 	mainLayout->setMenuBar(menuBar);
 	mainLayout->addLayout(sideBarLayout);
@@ -125,7 +142,7 @@ void MainWindow::gvLeftMouseDoubleClick(const QPointF &pos) {
 		if (!name.isEmpty()) {
 			graph->removeNode(name);
 			if (name == leSelectedNode->text()) {
-				leSelectedNode->setText("");
+				leSelectedNode->clear();
 			}
 		}
 	} else if (rbInsertEdge->isChecked()) {
@@ -163,6 +180,21 @@ void MainWindow::selectNodeColor() {
 		color = QColorDialog::getColor(graph->getNodeColor(name), this, "Node Color");
 		graph->setNodeColor(name, color);
 	}
+}
+
+void MainWindow::selectEdgeColor() {
+	QString lname = leFromNode->text();
+	QString rname = leToNode->text();
+	if (!lname.isEmpty() && !rname.isEmpty() && graph->edgeExists(lname, rname)) {
+		QColor color;
+		color = QColorDialog::getColor(graph->getEdgeColor(lname, rname), this, "Edge Color");
+		graph->setEdgeColor(lname, rname, color);
+	}
+}
+
+void MainWindow::newNodeSelected(const QString &name) {
+	leFromNode->setText(leToNode->text());
+	leToNode->setText(name);
 }
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event) {

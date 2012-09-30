@@ -56,9 +56,9 @@ void Node::addEdge(Node *to, int quality) {
 	to->set.insert(new Edge(edge, this));
 }
 
-Edge* Node::getEdgeTo(Node *node) { //probably slow
-	QSet<Edge*>::iterator it;
-	for (it = set.begin(); it != set.end(); ++it) {
+Edge* Node::getEdgeTo(Node *node) const { //probably slow
+	QSet<Edge*>::const_iterator it;
+	for (it = set.constBegin(); it != set.constEnd(); ++it) {
 		if ((*it)->getNode() == node) {
 			return *it;
 		}
@@ -99,5 +99,20 @@ void Node::setColor(const QColor &color) {
 
 const QColor Node::getColor() const {
 	return graphicsItem->brush().color();
+}
+
+void Node::setEdgeColor(Node *node, const QColor &color) {
+	Edge *e = getEdgeTo(node);
+	if (e != 0) {
+		e->setColor(color);
+	}
+}
+
+const QColor Node::getEdgeColor(Node *node) const {
+	Edge *e = getEdgeTo(node);
+	if (e != 0) {
+		return e->getColor();
+	}
+	return QColor();
 }
 }

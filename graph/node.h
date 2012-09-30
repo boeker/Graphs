@@ -19,12 +19,14 @@ public:
 	QString getName() const;
 	bool hasItem(QGraphicsItem *);
 	void addEdge(Node *, int);
-	Edge* getEdgeTo(Node*);
+	Edge* getEdgeTo(Node *) const;
 	void removeEdge(Node *, bool = false);
 	void setZValue(const qreal &);
 	void moveTo(const QPointF &);
 	void setColor(const QColor &);
 	const QColor getColor() const;
+	void setEdgeColor(Node *, const QColor &);
+	const QColor getEdgeColor(Node *) const;
 private:
 	QSet<Edge*> set;
 	QString name;

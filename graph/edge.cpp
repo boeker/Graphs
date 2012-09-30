@@ -1,5 +1,7 @@
 #include "edge.h"
 
+#include <QPen>
+
 
 namespace graph {
 Edge::Edge(QGraphicsScene *scene, Node *node, const QLineF &linePos, int quality)
@@ -43,5 +45,13 @@ QPointF Edge::qualityTextPoint(const QLineF &linePos) {
 	middlePoint.setY((linePos.y1() + linePos.y2()) / 2);
 	middlePoint.setY(middlePoint.y()-20);
 	return middlePoint;
+}
+
+void Edge::setColor(const QColor &color) {
+	lineItem->setPen(color);
+}
+
+const QColor Edge::getColor() const {
+	return lineItem->pen().color();
 }
 }

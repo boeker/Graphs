@@ -19,6 +19,8 @@ public:
 	Node* getNode();
 	void removeFromScene();
 	void moveTo(const QLineF &);
+	void setColor(const QColor &);
+	const QColor getColor() const;
 private:
 	QPointF qualityTextPoint(const QLineF &);
 	QGraphicsScene *scene;
