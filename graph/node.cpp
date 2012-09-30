@@ -97,7 +97,7 @@ void Node::setColor(const QColor &color) {
 	graphicsItem->setBrush(color);
 }
 
-const QColor Node::getColor() {
+const QColor Node::getColor() const {
 	return graphicsItem->brush().color();
 }
 }
