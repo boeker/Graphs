@@ -8,6 +8,7 @@
 #include <QLabel>
 #include <QFileDialog>
 #include <QRect>
+#include <QPainter>
 #include <QGraphicsSceneMouseEvent>
 #include <QColorDialog>
 
@@ -33,6 +34,7 @@ MainWindow::MainWindow() {
 	graphicsScene = new QGraphicsScene(0, 0, screen.width()/2, screen.height()/2);
 	graph = new graph::Graph(graphicsScene);
 	graphicsView->setScene(graphicsScene);
+	graphicsView->setRenderHint(QPainter::Antialiasing);
 	lastClick.clear();
 	grabbedNode.clear();
 

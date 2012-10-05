@@ -34,8 +34,8 @@ private:
 	QGraphicsTextItem *textItem;
 	QGraphicsScene *scene;
 	static const int RADIUS = 20;
-	static const int TEXTSHIFTY = 10;
-	static const int TEXTSHIFTX = 7;
+	static const double TEXTSHIFTY = 11.5f;
+	static const double TEXTSHIFTX = 8.3f;
 };
 }
 
