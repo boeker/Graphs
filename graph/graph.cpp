@@ -1,15 +1,147 @@
 #include "graph.h"
 
+#include <QFile>
+#include <QTextStream>
+#include <QList>
+#include <QStringList>
+
+const char* const  graph::Graph::MAGICNUMBER = "GRAPH";
+
 namespace graph {
 Graph::Graph(QGraphicsScene *scene)
 	: scene(scene) {
 }
 
 Graph::~Graph() {
+	clear();
+}
+
+void Graph::clear() {
 	QMap<QString,Node*>::const_iterator it;
 	while (map.size() > 0) {
 		it = map.constBegin();
 		removeNode(it.key());
+	}
+}
+
+void Graph::readFromFile(const QString &fileName) throw (GraphFileError) {
+	QFile file(fileName);
+	if (!file.exists()) {
+		return;
+	}
+	clear();
+	file.open(QIODevice::ReadOnly | QIODevice::Text);
+	QTextStream stream(&file);
+	QString magicnum = stream.readLine();
+	if (magicnum != MAGICNUMBER) {
+		throw GraphFileError("The file is not a valid graph file.");
+	}
+	QString nodeLine = stream.readLine();
+	if (nodeLine.isNull()) {
+		throw GraphFileError("Unexpected end of file.");
+	}
+	QStringList nodes = nodeLine.split(";");
+	QStringList::iterator it;
+	QMap<int,QString> nodeNumNames;
+	int counter = 0;
+	for (it = nodes.begin();it != nodes.end(); ++it) {
+		QString node = *it;
+		QString name = node.left(node.indexOf(":"));
+		node.remove(0, node.indexOf(":")+1);
+		QStringList properties = node.split(",");
+		if (name.isEmpty() || properties.size() != 3) {
+			throw GraphFileError("Error in the node description");
+		}
+		QColor color(properties[0]);
+		if (!color.isValid()) {
+			throw GraphFileError("Node \"" + name + "\" has an invalid Color: \"" + properties[0] + "\"");
+		}
+		bool ok;
+		QPointF pos;
+		pos.setX(properties[1].toDouble(&ok));
+		if (!ok) {
+			throw GraphFileError("Node \"" + name + "\" has an invalid X-Coordinate: \"" + properties[1] + "\"");
+		}
+		pos.setY(properties[2].toDouble(&ok));
+		if (!ok) {
+			throw GraphFileError("Node \"" + name + "\" has an invalid Y-Coordinate: \"" + properties[2] + "\"");
+		}
+		nodeNumNames.insert(counter++, name);
+		addNode(name, pos);
+		setNodeColor(name, color);
+	}
+	QString nextLine;
+	QStringList edgeDetails;
+	while (!(nextLine = stream.readLine()).isNull()) {
+		edgeDetails.append(nextLine);
+	}
+	if (edgeDetails.size() != map.size()) {
+		throw GraphFileError("Invalid number of lines");
+	}
+	counter = 0;
+	for (it = edgeDetails.begin(); it != edgeDetails.end(); ++it) {
+		QStringList details = it->split(";");
+		if (details.size() != map.size()) {
+			throw GraphFileError("Invalid number of edge details in the following line: \"" + *it + "\"");
+		}
+		int innerCounter = 0;
+		QStringList::iterator it2;
+		for (it2 = details.begin(); it2 != details.end(); ++it2) {
+			if (!it2->isEmpty()) {
+				QString detail = *it2;
+				QColor color = (detail.left(detail.indexOf(",")));
+				if (!color.isValid()) {
+					throw GraphFileError("An edge has an invalid color: \"" + detail.left(detail.indexOf(",")) + "\"");
+				}
+				detail.remove(0, detail.indexOf(",")+1);
+				bool ok;
+				int quality = detail.toInt(&ok);
+				if (!ok) {
+					throw GraphFileError("An Edge has an invalid quality: \"" + detail + "\"");
+				}
+				QString from = nodeNumNames.value(counter);
+				QString to = nodeNumNames.value(innerCounter);
+				if (!edgeExists(from, to)) {
+					addEdge(from, to, quality);
+					setEdgeColor(from, to, color);
+				}
+			}
+			++innerCounter;
+		}
+		++counter;
+	}
+}
+
+void Graph::writeToFile(const QString &fileName) {
+	QFile file(fileName);
+	file.open(QIODevice::WriteOnly | QIODevice::Text);
+	QTextStream stream(&file);
+	stream << QString(MAGICNUMBER) + "\n";
+	const QList<QString> nodeNames = map.keys();
+	QList<QString>::const_iterator it;
+	for (it = nodeNames.constBegin(); it != nodeNames.constEnd();) {
+		stream << map.value(*it)->toString();
+		if (++it != nodeNames.constEnd()) {
+			stream << ";";
+		}
+	}
+	stream << "\n";
+	for (it = nodeNames.constBegin(); it != nodeNames.constEnd();) {
+		QList<QString>::const_iterator it2;
+		for (it2 = nodeNames.constBegin(); it2 != nodeNames.constEnd();) {
+			Node *to = map.value(*it);
+			Node *from = map.value(*it2);
+			if (from != to && from->getEdgeTo(to) != 0) {
+				stream << from->getEdgeColor(to).name() << ",";
+				stream << from->getEdgeQuality(to);
+			}
+			if (++it2 != nodeNames.constEnd()) {
+				stream << ";";
+			}
+		}
+		if (++it != nodeNames.constEnd()) {
+			stream << "\n";
+		}
 	}
 }
 

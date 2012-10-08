@@ -11,6 +11,8 @@
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
 #include <QColorDialog>
+#include <QMessageBox>
+#include "graph/exceptions/graphfileerror.h"
 
 
 MainWindow::MainWindow() {
@@ -47,10 +49,17 @@ MainWindow::MainWindow() {
 	menuBar = new QMenuBar(this);
 	fileMenu = menuBar->addMenu("File");
 	newAction = new QAction("New", this);
-	connect(newAction, SIGNAL(triggered()), this, SLOT(newAct()));
+	connect(newAction, SIGNAL(triggered()), this, SLOT(newGraph()));
 	fileMenu->addAction(newAction);
+	openAction = new QAction("Open...", this);
+	connect(openAction, SIGNAL(triggered()), this, SLOT(readFromFile()));
+	fileMenu->addAction(openAction);
+	saveAsAction = new QAction("Save As...", this);
+	connect(saveAsAction, SIGNAL(triggered()), this, SLOT(writeToFile()));
+	fileMenu->addAction(saveAsAction);
+	fileMenu->addSeparator();
 	saveScreenshotAction = new QAction("Save Screenshot", this);
-	connect(saveScreenshotAction, SIGNAL(triggered()), this, SLOT(saveScreenshotAct()));
+	connect(saveScreenshotAction, SIGNAL(triggered()), this, SLOT(saveScreenshot()));
 	fileMenu->addAction(saveScreenshotAction);
 
 	QHBoxLayout *mainLayout = new QHBoxLayout;
@@ -227,16 +236,40 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
     }
 }
 
-void MainWindow::newAct() {
+void MainWindow::newGraph() {
 	delete graph;
 	graph = new graph::Graph(graphicsScene);
 }
 
-void MainWindow::saveScreenshotAct() {
+void MainWindow::saveScreenshot() {
 	QString fileName = QFileDialog::getSaveFileName(this, "Save Screenshot", "", "Images (*.png *.jpg)");
 	QPixmap pixMap = QPixmap::grabWidget(graphicsView, 1, 1, graphicsScene->width(), graphicsScene->height());
 	pixMap.save(fileName);
 
+}
+
+void MainWindow::readFromFile() {
+	QString fileName = QFileDialog::getOpenFileName(this, "Load Graph", "", "Graph (*.gra)");
+	if (!fileName.isNull()) {
+		try {
+			graph->readFromFile(fileName);
+		} catch (graph::GraphFileError &e) {
+			graph->clear();
+			QMessageBox mb;
+			mb.setText("Could not open the file\t\t\t");
+			mb.setInformativeText("There seems to be something wrong with it");
+			mb.setDetailedText(e.what());
+			mb.setIcon(QMessageBox::Critical);
+			mb.exec();
+		}
+	}
+}
+
+void MainWindow::writeToFile() {
+	QString fileName = QFileDialog::getSaveFileName(this, "Save Graph", "", "Graph (*.gra)");
+	if (!fileName.isNull()) {
+		graph->writeToFile(fileName);
+	}
 }
 
 bool MainWindow::onlyLetters(const QString &string) {

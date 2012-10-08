@@ -28,13 +28,17 @@ public slots:
 protected:
 	bool eventFilter(QObject *, QEvent *);
 private slots:
-	void newAct();
-	void saveScreenshotAct();
+	void newGraph();
+	void saveScreenshot();
+	void readFromFile();
+	void writeToFile();
 private:
 	bool onlyLetters(const QString &);
 	QMenuBar *menuBar;
 	QMenu *fileMenu;
 	QAction *newAction;
+	QAction *openAction;
+	QAction *saveAsAction;
 	QAction *saveScreenshotAction;
 	QRadioButton *rbInsertNode;
 	QRadioButton *rbRemoveNode;

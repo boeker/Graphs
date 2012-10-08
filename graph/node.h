@@ -24,9 +24,11 @@ public:
 	void setZValue(const qreal &);
 	void moveTo(const QPointF &);
 	void setColor(const QColor &);
-	const QColor getColor() const;
+	QColor getColor() const;
 	void setEdgeColor(Node *, const QColor &);
-	const QColor getEdgeColor(Node *) const;
+	QColor getEdgeColor(Node *) const;
+	int getEdgeQuality(Node *) const;
+	QString toString() const;
 private:
 	QSet<Edge*> set;
 	QString name;

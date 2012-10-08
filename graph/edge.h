@@ -20,7 +20,8 @@ public:
 	void removeFromScene();
 	void moveTo(const QLineF &);
 	void setColor(const QColor &);
-	const QColor getColor() const;
+	QColor getColor() const;
+	int getQuality() const;
 private:
 	QPointF qualityTextPoint(const QLineF &);
 	QGraphicsScene *scene;

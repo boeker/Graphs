@@ -51,7 +51,11 @@ void Edge::setColor(const QColor &color) {
 	lineItem->setPen(color);
 }
 
-const QColor Edge::getColor() const {
+QColor Edge::getColor() const {
 	return lineItem->pen().color();
+}
+
+int Edge::getQuality() const {
+	return quality;
 }
 }

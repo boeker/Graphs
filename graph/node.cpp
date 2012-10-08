@@ -97,7 +97,7 @@ void Node::setColor(const QColor &color) {
 	graphicsItem->setBrush(color);
 }
 
-const QColor Node::getColor() const {
+QColor Node::getColor() const {
 	return graphicsItem->brush().color();
 }
 
@@ -108,11 +108,27 @@ void Node::setEdgeColor(Node *node, const QColor &color) {
 	}
 }
 
-const QColor Node::getEdgeColor(Node *node) const {
+QColor Node::getEdgeColor(Node *node) const {
 	Edge *e = getEdgeTo(node);
 	if (e != 0) {
 		return e->getColor();
 	}
 	return QColor();
+}
+
+int Node::getEdgeQuality(Node *node) const {
+	Edge *e = getEdgeTo(node);
+	if (e != 0) {
+		return e->getQuality();
+	}
+	return 0;
+}
+
+QString Node::toString() const {
+	QString string = name + ":" + getColor().name() + ",";
+	QPointF pos = graphicsItem->scenePos();
+	string.append(QString::number(pos.x() + RADIUS) + ",");
+	string.append(QString::number(pos.y() + RADIUS));
+	return string;
 }
 }
