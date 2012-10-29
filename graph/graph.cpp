@@ -1,5 +1,6 @@
 #include "graph.h"
 
+#include <QWidget>
 #include <QFile>
 #include <QTextStream>
 #include <QList>
@@ -34,11 +35,11 @@ void Graph::readFromFile(const QString &fileName) throw (GraphFileError) {
 	QTextStream stream(&file);
 	QString magicnum = stream.readLine();
 	if (magicnum != MAGICNUMBER) {
-		throw GraphFileError("The file is not a valid graph file.");
+		throw GraphFileError(QWidget::tr("The file is not a valid graph file"));
 	}
 	QString nodeLine = stream.readLine();
 	if (nodeLine.isNull()) {
-		throw GraphFileError("Unexpected end of file.");
+		throw GraphFileError(QWidget::tr("Unexpected end of file"));
 	}
 	QStringList nodes = nodeLine.split(";");
 	QStringList::iterator it;
@@ -50,21 +51,21 @@ void Graph::readFromFile(const QString &fileName) throw (GraphFileError) {
 		node.remove(0, node.indexOf(":")+1);
 		QStringList properties = node.split(",");
 		if (name.isEmpty() || properties.size() != 3) {
-			throw GraphFileError("Error in the node description");
+			throw GraphFileError(QWidget::tr("Error in the node description"));
 		}
 		QColor color(properties[0]);
 		if (!color.isValid()) {
-			throw GraphFileError("Node \"" + name + "\" has an invalid Color: \"" + properties[0] + "\"");
+			throw GraphFileError(QWidget::tr("Node \"%1\" has an invalid Color: \"%2\"").arg(name).arg(properties[0]));
 		}
 		bool ok;
 		QPointF pos;
 		pos.setX(properties[1].toDouble(&ok));
 		if (!ok) {
-			throw GraphFileError("Node \"" + name + "\" has an invalid X-Coordinate: \"" + properties[1] + "\"");
+			throw GraphFileError(QWidget::tr("Node \"%1\" has an invalid X-Coordinate: \"%2\"").arg(name).arg(properties[1]));
 		}
 		pos.setY(properties[2].toDouble(&ok));
 		if (!ok) {
-			throw GraphFileError("Node \"" + name + "\" has an invalid Y-Coordinate: \"" + properties[2] + "\"");
+			throw GraphFileError(QWidget::tr("Node \"%1\" has an invalid Y-Coordinate: \"%2\"").arg(name).arg(properties[2]));
 		}
 		nodeNumNames.insert(counter++, name);
 		addNode(name, pos);
@@ -76,13 +77,13 @@ void Graph::readFromFile(const QString &fileName) throw (GraphFileError) {
 		edgeDetails.append(nextLine);
 	}
 	if (edgeDetails.size() != map.size()) {
-		throw GraphFileError("Invalid number of lines");
+		throw GraphFileError(QWidget::tr("Invalid number of lines"));
 	}
 	counter = 0;
 	for (it = edgeDetails.begin(); it != edgeDetails.end(); ++it) {
 		QStringList details = it->split(";");
 		if (details.size() != map.size()) {
-			throw GraphFileError("Invalid number of edge details in the following line: \"" + *it + "\"");
+			throw GraphFileError(QWidget::tr("Invalid number of edge details in the following line: \"%1\"").arg(*it));
 		}
 		int innerCounter = 0;
 		QStringList::iterator it2;
@@ -91,13 +92,13 @@ void Graph::readFromFile(const QString &fileName) throw (GraphFileError) {
 				QString detail = *it2;
 				QColor color = (detail.left(detail.indexOf(",")));
 				if (!color.isValid()) {
-					throw GraphFileError("An edge has an invalid color: \"" + detail.left(detail.indexOf(",")) + "\"");
+					throw GraphFileError(QWidget::tr("An edge has an invalid color: \"%1\"").arg(detail.left(detail.indexOf(","))));
 				}
 				detail.remove(0, detail.indexOf(",")+1);
 				bool ok;
 				int quality = detail.toInt(&ok);
 				if (!ok) {
-					throw GraphFileError("An Edge has an invalid quality: \"" + detail + "\"");
+					throw GraphFileError(QWidget::tr("An Edge has an invalid quality: \"%1\"").arg(detail));
 				}
 				QString from = nodeNumNames.value(counter);
 				QString to = nodeNumNames.value(innerCounter);

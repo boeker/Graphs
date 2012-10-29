@@ -18,6 +18,7 @@ Makefile
 Makefile.Debug
 Makefile.Release
 moc_*.cpp
+*.qm
 
 # System files
 Thumbs.db

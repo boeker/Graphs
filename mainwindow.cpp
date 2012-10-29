@@ -12,15 +12,16 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QColorDialog>
 #include <QMessageBox>
+#include <QKeySequence>
 #include "graph/exceptions/graphfileerror.h"
 
 
 MainWindow::MainWindow() {
-	rbInsertNode = new QRadioButton("Insert Node");
+	rbInsertNode = new QRadioButton(tr("Insert Node"));
 	rbInsertNode->setChecked(true);
-	rbRemoveNode = new QRadioButton("Remove Node");
-	rbInsertEdge = new QRadioButton("Insert Edge");
-	rbRemoveEdge = new QRadioButton("Remove Edge");
+	rbRemoveNode = new QRadioButton(tr("Remove Node"));
+	rbInsertEdge = new QRadioButton(tr("Insert Edge"));
+	rbRemoveEdge = new QRadioButton(tr("Remove Edge"));
 	leNextNodeName = new QLineEdit("A");
 	leNextEdgeQuality = new QLineEdit("1");
 	leSelectedNode = new QLineEdit();
@@ -29,8 +30,8 @@ MainWindow::MainWindow() {
 	leToNode->setReadOnly(true);
 	leFromNode = new QLineEdit();
 	leFromNode->setReadOnly(true);
-	pbSelectNodeColor = new QPushButton("Select Color");
-	pbSelectEdgeColor = new QPushButton("Select Color");
+	pbSelectNodeColor = new QPushButton(tr("Select Color"));
+	pbSelectEdgeColor = new QPushButton(tr("Select Color"));
 	graphicsView = new QGraphicsView;
 	QRect screen = QApplication::desktop()->screenGeometry();
 	graphicsScene = new QGraphicsScene(0, 0, screen.width()/2, screen.height()/2);
@@ -47,18 +48,20 @@ MainWindow::MainWindow() {
 	connect(leSelectedNode, SIGNAL(textChanged(const QString &)), this, SLOT(newNodeSelected(const QString &)));
 
 	menuBar = new QMenuBar(this);
-	fileMenu = menuBar->addMenu("File");
-	newAction = new QAction("New", this);
+	fileMenu = menuBar->addMenu(tr("File"));
+	newAction = new QAction(tr("New"), this);
+	newAction->setShortcuts(QKeySequence::New);
 	connect(newAction, SIGNAL(triggered()), this, SLOT(newGraph()));
 	fileMenu->addAction(newAction);
-	openAction = new QAction("Open...", this);
+	openAction = new QAction(tr("Open..."), this);
+	openAction->setShortcuts(QKeySequence::Open);
 	connect(openAction, SIGNAL(triggered()), this, SLOT(readFromFile()));
 	fileMenu->addAction(openAction);
-	saveAsAction = new QAction("Save As...", this);
+	saveAsAction = new QAction(tr("Save As..."), this);
 	connect(saveAsAction, SIGNAL(triggered()), this, SLOT(writeToFile()));
 	fileMenu->addAction(saveAsAction);
 	fileMenu->addSeparator();
-	saveScreenshotAction = new QAction("Save Screenshot", this);
+	saveScreenshotAction = new QAction(tr("Save Screenshot"), this);
 	connect(saveScreenshotAction, SIGNAL(triggered()), this, SLOT(saveScreenshot()));
 	fileMenu->addAction(saveScreenshotAction);
 
@@ -71,39 +74,39 @@ MainWindow::MainWindow() {
 	actionLayout->addWidget(rbRemoveNode);
 	actionLayout->addWidget(rbInsertEdge);
 	actionLayout->addWidget(rbRemoveEdge);
-	QGroupBox *actionGroupBox = new QGroupBox("Action");
+	QGroupBox *actionGroupBox = new QGroupBox(tr("Action"));
 	actionGroupBox->setLayout(actionLayout);
 	sideBarLayout->addWidget(actionGroupBox);
 
 	QVBoxLayout *nextNodeLayout = new QVBoxLayout;
-	nextNodeLayout->addWidget(new QLabel("Name:"));
+	nextNodeLayout->addWidget(new QLabel(tr("Name:")));
 	nextNodeLayout->addWidget(leNextNodeName);
-	QGroupBox *nextNodeGroupBox = new QGroupBox("Next Node");
+	QGroupBox *nextNodeGroupBox = new QGroupBox(tr("Next Node"));
 	nextNodeGroupBox->setLayout(nextNodeLayout);
 	sideBarLayout->addWidget(nextNodeGroupBox);
 
 	QVBoxLayout *nextEdgeLayout = new QVBoxLayout;
-	nextEdgeLayout->addWidget(new QLabel("Quality:"));
+	nextEdgeLayout->addWidget(new QLabel(tr("Quality:")));
 	nextEdgeLayout->addWidget(leNextEdgeQuality);
-	QGroupBox *nextEdgeGroupBox = new QGroupBox("Next Edge");
+	QGroupBox *nextEdgeGroupBox = new QGroupBox(tr("Next Edge"));
 	nextEdgeGroupBox->setLayout(nextEdgeLayout);
 	sideBarLayout->addWidget(nextEdgeGroupBox);
 
 	QVBoxLayout *selectedNodeLayout = new QVBoxLayout;
-	selectedNodeLayout->addWidget(new QLabel("Name:"));
+	selectedNodeLayout->addWidget(new QLabel(tr("Name:")));
 	selectedNodeLayout->addWidget(leSelectedNode);
 	selectedNodeLayout->addWidget(pbSelectNodeColor);
-	QGroupBox *selectedNodeGroupBox = new QGroupBox("Selected Node");
+	QGroupBox *selectedNodeGroupBox = new QGroupBox(tr("Selected Node"));
 	selectedNodeGroupBox->setLayout(selectedNodeLayout);
 	sideBarLayout->addWidget(selectedNodeGroupBox);
 
 	QVBoxLayout *selectedEdgeLayout = new QVBoxLayout;
-	selectedEdgeLayout->addWidget(new QLabel("From:"));
+	selectedEdgeLayout->addWidget(new QLabel(tr("From:")));
 	selectedEdgeLayout->addWidget(leFromNode);
-	selectedEdgeLayout->addWidget(new QLabel("To:"));
+	selectedEdgeLayout->addWidget(new QLabel(tr("To:")));
 	selectedEdgeLayout->addWidget(leToNode);
 	selectedEdgeLayout->addWidget(pbSelectEdgeColor);
-	QGroupBox *selectedEdgeGroupBox = new QGroupBox("Selected Edge");
+	QGroupBox *selectedEdgeGroupBox = new QGroupBox(tr("Selected Edge"));
 	selectedEdgeGroupBox->setLayout(selectedEdgeLayout);
 	sideBarLayout->addWidget(selectedEdgeGroupBox);
 
@@ -113,7 +116,7 @@ MainWindow::MainWindow() {
 	graphicsScene->installEventFilter(this);
 
 	setLayout(mainLayout);
-	setWindowTitle("Graphs");
+	setWindowTitle(tr("Graphs"));
 	mainLayout->setSizeConstraint(QLayout::SetFixedSize);
 }
 
@@ -188,7 +191,7 @@ void MainWindow::selectNodeColor() {
 	QString name = leSelectedNode->text();
 	if (!name.isEmpty()) {
 		QColor color;
-		color = QColorDialog::getColor(graph->getNodeColor(name), this, "Node Color");
+		color = QColorDialog::getColor(graph->getNodeColor(name), this, tr("Node Color"));
 		graph->setNodeColor(name, color);
 	}
 }
@@ -198,7 +201,7 @@ void MainWindow::selectEdgeColor() {
 	QString rname = leToNode->text();
 	if (!lname.isEmpty() && !rname.isEmpty() && graph->edgeExists(lname, rname)) {
 		QColor color;
-		color = QColorDialog::getColor(graph->getEdgeColor(lname, rname), this, "Edge Color");
+		color = QColorDialog::getColor(graph->getEdgeColor(lname, rname), this, tr("Edge Color"));
 		graph->setEdgeColor(lname, rname, color);
 	}
 }
@@ -242,22 +245,22 @@ void MainWindow::newGraph() {
 }
 
 void MainWindow::saveScreenshot() {
-	QString fileName = QFileDialog::getSaveFileName(this, "Save Screenshot", "", "Images (*.png *.jpg)");
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Save Screenshot"), "", tr("Images (*.png *.jpg)"));
 	QPixmap pixMap = QPixmap::grabWidget(graphicsView, 1, 1, graphicsScene->width(), graphicsScene->height());
 	pixMap.save(fileName);
 
 }
 
 void MainWindow::readFromFile() {
-	QString fileName = QFileDialog::getOpenFileName(this, "Load Graph", "", "Graph (*.gra)");
+	QString fileName = QFileDialog::getOpenFileName(this, tr("Load Graph"), "", tr("Graph (*.gra)"));
 	if (!fileName.isNull()) {
 		try {
 			graph->readFromFile(fileName);
 		} catch (graph::GraphFileError &e) {
 			graph->clear();
 			QMessageBox mb;
-			mb.setText("Could not open the file\t\t\t");
-			mb.setInformativeText("There seems to be something wrong with it");
+			mb.setText(tr("Could not open the file\t\t\t"));
+			mb.setInformativeText(tr("There seems to be something wrong with it"));
 			mb.setDetailedText(e.what());
 			mb.setIcon(QMessageBox::Critical);
 			mb.exec();
@@ -266,7 +269,7 @@ void MainWindow::readFromFile() {
 }
 
 void MainWindow::writeToFile() {
-	QString fileName = QFileDialog::getSaveFileName(this, "Save Graph", "", "Graph (*.gra)");
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Save Graph"), "", tr("Graph (*.gra)"));
 	if (!fileName.isNull()) {
 		graph->writeToFile(fileName);
 	}
