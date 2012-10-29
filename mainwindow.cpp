@@ -165,10 +165,9 @@ void MainWindow::gvLeftMouseDoubleClick(const QPointF &pos) {
 			lastClick = newClick;
 		} else if (!newClick.isEmpty() && newClick != lastClick) {
 			bool ok;
-			int quality = leNextEdgeQuality->text().toInt(&ok, 10);
+			double quality = leNextEdgeQuality->text().toDouble(&ok);
 			if (ok) {
 				graph->addEdge(lastClick, newClick, quality);
-				leNextEdgeQuality->setText(QString::number(++quality));
 			}
 			lastClick.clear();
 		}

@@ -96,7 +96,7 @@ void Graph::readFromFile(const QString &fileName) throw (GraphFileError) {
 				}
 				detail.remove(0, detail.indexOf(",")+1);
 				bool ok;
-				int quality = detail.toInt(&ok);
+				double quality = detail.toDouble(&ok);
 				if (!ok) {
 					throw GraphFileError(QWidget::tr("An Edge has an invalid quality: \"%1\"").arg(detail));
 				}
@@ -162,7 +162,7 @@ void Graph::moveNodeTo(const QString &name, const QPointF &pos) {
 	map.value(name)->moveTo(pos);
 }
 
-void Graph::addEdge(const QString &l, const QString &r, int quality) {
+void Graph::addEdge(const QString &l, const QString &r, double quality) {
 	if (map.value(l)->getEdgeTo(map.value(r)) == 0) {
 		map.value(l)->addEdge(map.value(r), quality);
 	}

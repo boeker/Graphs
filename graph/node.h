@@ -18,7 +18,7 @@ public:
 	~Node();
 	QString getName() const;
 	bool hasItem(QGraphicsItem *);
-	void addEdge(Node *, int);
+	void addEdge(Node *, double);
 	Edge* getEdgeTo(Node *) const;
 	void removeEdge(Node *, bool = false);
 	void setZValue(const qreal &);
@@ -27,7 +27,7 @@ public:
 	QColor getColor() const;
 	void setEdgeColor(Node *, const QColor &);
 	QColor getEdgeColor(Node *) const;
-	int getEdgeQuality(Node *) const;
+	double getEdgeQuality(Node *) const;
 	QString toString() const;
 private:
 	QSet<Edge*> set;

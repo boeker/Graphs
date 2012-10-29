@@ -19,7 +19,7 @@ public:
 	void addNode(const QString &, const QPointF &);
 	void removeNode(const QString &);
 	void moveNodeTo(const QString &, const QPointF &);
-	void addEdge(const QString &, const QString &, int);
+	void addEdge(const QString &, const QString &, double);
 	void removeEdge(const QString &, const QString &);
 	bool edgeExists(const QString &, const QString &);
 	QString getNodeAt(const QPointF &);

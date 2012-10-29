@@ -47,7 +47,7 @@ bool Node::hasItem(QGraphicsItem *item) {
 	}
 }
 
-void Node::addEdge(Node *to, int quality) {
+void Node::addEdge(Node *to, double quality) {
 	QLineF line(graphicsItem->scenePos(), to->graphicsItem->scenePos());
 	line.setP1(QPoint(line.p1().x()+RADIUS, line.p1().y()+RADIUS));
 	line.setP2(QPoint(line.p2().x()+RADIUS, line.p2().y()+RADIUS));
@@ -116,7 +116,7 @@ QColor Node::getEdgeColor(Node *node) const {
 	return QColor();
 }
 
-int Node::getEdgeQuality(Node *node) const {
+double Node::getEdgeQuality(Node *node) const {
 	Edge *e = getEdgeTo(node);
 	if (e != 0) {
 		return e->getQuality();

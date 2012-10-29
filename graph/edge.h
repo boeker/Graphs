@@ -14,21 +14,21 @@ class Node;
 namespace graph {
 class Edge {
 public:
-	Edge(QGraphicsScene *, Node *, const QLineF &, int);
+	Edge(QGraphicsScene *, Node *, const QLineF &, double);
 	Edge(Edge *, Node *);
 	Node* getNode();
 	void removeFromScene();
 	void moveTo(const QLineF &);
 	void setColor(const QColor &);
 	QColor getColor() const;
-	int getQuality() const;
+	double getQuality() const;
 private:
 	QPointF qualityTextPoint(const QLineF &);
 	QGraphicsScene *scene;
 	Node *node;
 	QGraphicsLineItem *lineItem;
 	QGraphicsTextItem *textItem;
-	int quality;
+	double quality;
 };
 }
 

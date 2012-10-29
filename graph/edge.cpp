@@ -4,7 +4,7 @@
 
 
 namespace graph {
-Edge::Edge(QGraphicsScene *scene, Node *node, const QLineF &linePos, int quality)
+Edge::Edge(QGraphicsScene *scene, Node *node, const QLineF &linePos, double quality)
 	: scene(scene),
 	  node(node),
 	  quality(quality) {
@@ -55,7 +55,7 @@ QColor Edge::getColor() const {
 	return lineItem->pen().color();
 }
 
-int Edge::getQuality() const {
+double Edge::getQuality() const {
 	return quality;
 }
 }
