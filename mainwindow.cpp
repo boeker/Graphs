@@ -63,6 +63,11 @@ MainWindow::MainWindow() {
 	openAction->setShortcuts(QKeySequence::Open);
 	connect(openAction, SIGNAL(triggered()), this, SLOT(readFromFile()));
 	fileMenu->addAction(openAction);
+	saveAction = new QAction(tr("Save"), this);
+	saveAction->setShortcuts(QKeySequence::Save);
+	connect(saveAction, SIGNAL(triggered()), this, SLOT(writeToLastFile()));
+	saveAction->setEnabled(false);
+	fileMenu->addAction(saveAction);
 	saveAsAction = new QAction(tr("Save As..."), this);
 	connect(saveAsAction, SIGNAL(triggered()), this, SLOT(writeToFile()));
 	fileMenu->addAction(saveAsAction);
@@ -283,6 +288,7 @@ void MainWindow::newGraph() {
 	graph->clearNodePath();
 	delete graph;
 	graph = new graph::Graph(graphicsScene);
+	saveAction->setEnabled(false);
 }
 
 void MainWindow::saveScreenshot() {
@@ -314,6 +320,14 @@ void MainWindow::writeToFile() {
 	QString fileName = QFileDialog::getSaveFileName(this, tr("Save Graph"), "", tr("Graph (*.gra)"));
 	if (!fileName.isNull()) {
 		graph->writeToFile(fileName);
+		lastFilePath = fileName;
+		saveAction->setEnabled(true);
+	}
+}
+
+void MainWindow::writeToLastFile() {
+	if (!lastFilePath.isNull()) {
+		graph->writeToFile(lastFilePath);
 	}
 }
 

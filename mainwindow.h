@@ -36,6 +36,7 @@ private slots:
 	void saveScreenshot();
 	void readFromFile();
 	void writeToFile();
+	void writeToLastFile();
 	void depthFirstSearch();
 	void breadthFirstSearch();
 private:
@@ -48,6 +49,7 @@ private:
 	QMenu *fileMenu;
 	QAction *newAction;
 	QAction *openAction;
+	QAction *saveAction;
 	QAction *saveAsAction;
 	QAction *saveScreenshotAction;
 
@@ -71,6 +73,7 @@ private:
 	graph::Graph *graph;
 	QString lastClick; //For implementing the double click actions
 	QString grabbedNode; //For implementing node relocating
+	QString lastFilePath;
 };
 
 #endif
