@@ -19,4 +19,4 @@ SOURCES += main.cpp \
            graph/node.cpp \
            graph/exceptions/graphfileerror.cpp
 
-TRANSLATIONS = graphs_de.ts
+TRANSLATIONS = translations/graphs_de.ts
