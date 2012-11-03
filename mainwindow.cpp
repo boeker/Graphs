@@ -50,6 +50,7 @@ MainWindow::MainWindow() {
 	connect(pbSelectEdgeColor, SIGNAL(pressed()), this, SLOT(selectEdgeColor()));
 	connect(leSelectedNode, SIGNAL(textChanged(const QString &)), this, SLOT(newNodeSelected(const QString &)));
 	connect(resultDialog, SIGNAL(itemClicked(const QString &)), this, SLOT(selectedAlgorithmResult(const QString &)));
+	connect(resultDialog, SIGNAL(rejected()), this, SLOT(onResultDialogClose()));
 
 	menuBar = new QMenuBar(this);
 
@@ -160,6 +161,8 @@ void MainWindow::gvLeftMouseDoubleClick(const QPointF &pos) {
 		if (!name.isEmpty() && onlyLetters(name)) {
 			graph->addNode(name, pos);
 			leSelectedNode->setText(name);
+			closeAlgorithmView();
+			graph->clearNodePath();
 			if (name.length() == 1 && name[0].toLower() != 'z') {
 				name[0] = QChar(name[0].toAscii()+1);
 				leNextNodeName->setText(name);
@@ -169,6 +172,8 @@ void MainWindow::gvLeftMouseDoubleClick(const QPointF &pos) {
 		QString name = graph->getNodeAt(pos);
 		if (!name.isEmpty()) {
 			graph->removeNode(name);
+			closeAlgorithmView();
+			graph->clearNodePath();
 			if (name == leSelectedNode->text()) {
 				leSelectedNode->clear();
 			}
@@ -182,6 +187,8 @@ void MainWindow::gvLeftMouseDoubleClick(const QPointF &pos) {
 			double quality = leNextEdgeQuality->text().toDouble(&ok);
 			if (ok) {
 				graph->addEdge(lastClick, newClick, quality);
+				closeAlgorithmView();
+				graph->clearNodePath();
 			}
 			lastClick.clear();
 		}
@@ -191,9 +198,16 @@ void MainWindow::gvLeftMouseDoubleClick(const QPointF &pos) {
 			lastClick = newClick;
 		} else if (!newClick.isEmpty() && newClick != lastClick) {
 			graph->removeEdge(lastClick, newClick);
+			closeAlgorithmView();
+			graph->clearNodePath();
 			lastClick.clear();
 		}
 	}
+}
+
+void MainWindow::closeAlgorithmView() {
+	resultDialog->clearListWidget();
+	resultDialog->setVisible(false);
 }
 
 void MainWindow::resetLastClick() {
@@ -232,6 +246,10 @@ void MainWindow::selectedAlgorithmResult(const QString &result) {
 	graph->markNodePath(result);
 }
 
+void MainWindow::onResultDialogClose() {
+	graph->clearNodePath();
+}
+
 bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
     if (event->type() == QEvent::GraphicsSceneMousePress) {
     	QGraphicsSceneMouseEvent *ev = static_cast<QGraphicsSceneMouseEvent*>(event);
@@ -261,10 +279,10 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
 }
 
 void MainWindow::newGraph() {
+	closeAlgorithmView();
+	graph->clearNodePath();
 	delete graph;
 	graph = new graph::Graph(graphicsScene);
-	resultDialog->clearListWidget();
-	resultDialog->setVisible(false);
 }
 
 void MainWindow::saveScreenshot() {
@@ -288,8 +306,7 @@ void MainWindow::readFromFile() {
 			mb.setIcon(QMessageBox::Critical);
 			mb.exec();
 		}
-		resultDialog->clearListWidget();
-		resultDialog->setVisible(false);
+		closeAlgorithmView();
 	}
 }
 
@@ -301,6 +318,7 @@ void MainWindow::writeToFile() {
 }
 
 void MainWindow::depthFirstSearch() {
+	graph->clearNodePath();
 	QStringList list = graph->depthFirstSearch();
 	if (!resultDialog->isVisible()) {
 		resultDialog->show();
@@ -310,6 +328,7 @@ void MainWindow::depthFirstSearch() {
 }
 
 void MainWindow::breadthFirstSearch() {
+	graph->clearNodePath();
 	QStringList list = graph->breadthFirstSearch();
 	if (!resultDialog->isVisible()) {
 		resultDialog->show();

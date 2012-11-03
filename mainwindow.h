@@ -21,12 +21,14 @@ public:
 	void gvLeftMouseRelease();
 	void gvMouseMove(const QPointF &);
 	void gvLeftMouseDoubleClick(const QPointF &);
+	void closeAlgorithmView();
 public slots:
 	void resetLastClick();
 	void selectNodeColor();
 	void selectEdgeColor();
 	void newNodeSelected(const QString &);
 	void selectedAlgorithmResult(const QString &);
+	void onResultDialogClose();
 protected:
 	bool eventFilter(QObject *, QEvent *);
 private slots:

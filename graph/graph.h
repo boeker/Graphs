@@ -30,6 +30,7 @@ public:
 	void setEdgeColor(const QString &, const QString &, const QColor &);
 	const QColor getEdgeColor(const QString &, const QString &);
 	void markNodePath(const QString &);
+	void clearNodePath();
 	QStringList depthFirstSearch();
 	QStringList breadthFirstSearch();
 private:

@@ -218,14 +218,20 @@ const QColor Graph::getEdgeColor(const QString &l, const QString &r) {
 }
 
 void Graph::markNodePath(const QString &nodeString) {
+	clearNodePath();
 	QStringList nodes = nodeString.split(RESULTSEPERATOR);
-	QColor color(Qt::red);
-	//double increase = 255/(nodes.size()-1);
+	int i = 1;
 	while (!nodes.isEmpty()) {
-		map.value(nodes.front())->setColor(color);
+		map.value(nodes.front())->setNumber(i++);
 		nodes.removeFirst();
-		//color.setGreenF(color.greenF()+increase);
-		color = color.lighter(115);
+	}
+}
+
+void Graph::clearNodePath() {
+	QList<Node*> nodes = map.values();
+	QList<Node*>::iterator it;
+	for (it = nodes.begin(); it != nodes.end(); ++it) {
+		(*it)->clearNumber();
 	}
 }
 

@@ -31,11 +31,14 @@ public:
 	double getEdgeQuality(Node *) const;
 	QString toString() const;
 	QStringList getNeighbourNodes() const;
+	void setNumber(int);
+	void clearNumber();
 private:
 	QSet<Edge*> set;
 	QString name;
 	QGraphicsEllipseItem *graphicsItem;
 	QGraphicsTextItem *textItem;
+	QGraphicsTextItem *numberTextItem;
 	QGraphicsScene *scene;
 	static const int RADIUS = 20;
 #if defined Q_WS_WIN

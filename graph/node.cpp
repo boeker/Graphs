@@ -3,6 +3,7 @@
 #include <QLineF>
 #include <QBrush>
 #include <QList>
+#include <QFont>
 
 namespace graph {
 Node::Node(QGraphicsScene *scene,
@@ -14,9 +15,14 @@ Node::Node(QGraphicsScene *scene,
 	scene(scene) {
 		graphicsItem = scene->addEllipse(0, 0, RADIUS*2, RADIUS*2);
 		graphicsItem->setBrush(Qt::white);
-		graphicsItem->setPos(pos.x()-RADIUS, pos.y()-RADIUS);
 		textItem = scene->addText(name);
-		textItem->setPos(pos.x()-TEXTSHIFTX, pos.y()-TEXTSHIFTY);
+		numberTextItem = scene->addText("");
+		numberTextItem->setDefaultTextColor(Qt::red);
+		QFont font = numberTextItem->font();
+		font.setPointSize(font.pointSize()+1);
+		font.setBold(true);
+		numberTextItem->setFont(font);
+		moveTo(pos);
 }
 
 Node::~Node() {
@@ -32,8 +38,10 @@ Node::~Node() {
 	}
 	graphicsItem->scene()->removeItem(graphicsItem);
 	textItem->scene()->removeItem(textItem);
+	numberTextItem->scene()->removeItem(numberTextItem);
 	delete graphicsItem;
 	delete textItem;
+	delete numberTextItem;
 }
 
 QString Node::getName() const {
@@ -41,7 +49,7 @@ QString Node::getName() const {
 }
 
 bool Node::hasItem(QGraphicsItem *item) {
-	if (item == graphicsItem || item == textItem) {
+	if (item == graphicsItem || item == textItem || item == numberTextItem) {
 		return true;
 	} else {
 		return false;
@@ -84,6 +92,7 @@ void Node::setZValue(const qreal &val) {
 void Node::moveTo(const QPointF &pos) {
 	graphicsItem->setPos(pos.x()-RADIUS, pos.y()-RADIUS);
 	textItem->setPos(pos.x()-TEXTSHIFTX, pos.y()-TEXTSHIFTY);
+	numberTextItem->setPos(textItem->x()-1.5f, textItem->y()+11.0f);
 	QSet<Edge*>::iterator it;
 	for (it = set.begin(); it != set.end(); ++it) {
 		QLineF linepos;
@@ -142,5 +151,13 @@ QStringList Node::getNeighbourNodes() const {
 	}
 	nodes.sort();
 	return nodes;
+}
+
+void Node::setNumber(int number) {
+	numberTextItem->setPlainText(QString::number(number));
+}
+
+void Node::clearNumber() {
+	numberTextItem->setPlainText("");
 }
 }
