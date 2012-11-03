@@ -5,15 +5,15 @@ INCLUDEPATH += .
 CONFIG += qt exceptions
 
 # Input
-HEADERS += mainwindow.h \
-           resultdialog.h \
+HEADERS += gui/mainwindow.h \
+           gui/resultdialog.h \
            graph/edge.h \
            graph/graph.h \
            graph/node.h \
            graph/exceptions/graphfileerror.h
 SOURCES += main.cpp \
-           mainwindow.cpp \
-           resultdialog.cpp \
+           gui/mainwindow.cpp \
+           gui/resultdialog.cpp \
            graph/edge.cpp \
            graph/graph.cpp \
            graph/node.cpp \

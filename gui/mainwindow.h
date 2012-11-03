@@ -10,7 +10,7 @@
 #include <QAction>
 #include <QPushButton>
 #include "resultdialog.h"
-#include "graph/graph.h"
+#include "../graph/graph.h"
 
 class MainWindow : public QWidget {
 	Q_OBJECT
