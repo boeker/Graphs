@@ -9,6 +9,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QPushButton>
+#include "resultdialog.h"
 #include "graph/graph.h"
 
 class MainWindow : public QWidget {
@@ -25,6 +26,7 @@ public slots:
 	void selectNodeColor();
 	void selectEdgeColor();
 	void newNodeSelected(const QString &);
+	void selectedAlgorithmResult(const QString &);
 protected:
 	bool eventFilter(QObject *, QEvent *);
 private slots:
@@ -32,14 +34,25 @@ private slots:
 	void saveScreenshot();
 	void readFromFile();
 	void writeToFile();
+	void depthFirstSearch();
+	void breadthFirstSearch();
 private:
 	bool onlyLetters(const QString &);
+
+	ResultDialog *resultDialog;
+
 	QMenuBar *menuBar;
+
 	QMenu *fileMenu;
 	QAction *newAction;
 	QAction *openAction;
 	QAction *saveAsAction;
 	QAction *saveScreenshotAction;
+
+	QMenu *algorithmMenu;
+	QAction *depthFirstSearchAction;
+	QAction *breadthFirstSearchAction;
+
 	QRadioButton *rbInsertNode;
 	QRadioButton *rbRemoveNode;
 	QRadioButton *rbInsertEdge;

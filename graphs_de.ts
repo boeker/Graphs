@@ -115,6 +115,26 @@
         <source>Save Graph</source>
         <translation>Graphen speichern</translation>
     </message>
+    <message>
+        <source>Algorithm</source>
+        <translation>Algorithmus</translation>
+    </message>
+    <message>
+        <source>Depth-first Search</source>
+        <translation>Tiefendurchlauf</translation>
+    </message>
+    <message>
+        <source>Breadth-first Search</source>
+        <translation>Breitendurchlauf</translation>
+    </message>
+    <message>
+        <source>Algorithm: Depth-first search</source>
+        <translation>Algorithmus: Tiefendurchlauf</translation>
+    </message>
+    <message>
+        <source>Algorithm: Breadth-first search</source>
+        <translation>Algorithmus: Breitendurchlauf</translation>
+    </message>
 </context>
 <context>
     <name>QWidget</name>

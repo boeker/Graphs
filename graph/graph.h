@@ -5,6 +5,7 @@
 #include <QMap>
 #include <QGraphicsScene>
 #include <QPointF>
+#include <QStringList>
 #include "node.h"
 #include "exceptions/graphfileerror.h"
 
@@ -28,10 +29,15 @@ public:
 	const QColor getNodeColor(const QString &) const;
 	void setEdgeColor(const QString &, const QString &, const QColor &);
 	const QColor getEdgeColor(const QString &, const QString &);
+	void markNodePath(const QString &);
+	QStringList depthFirstSearch();
+	QStringList breadthFirstSearch();
 private:
+	void depthFirstSearch(QStringList &,const QString &);
 	QGraphicsScene *scene;
 	QMap<QString,Node*> map;
 	static const char* const MAGICNUMBER;
+	static const char* const RESULTSEPERATOR;
 };
 }
 

@@ -2,6 +2,7 @@
 
 #include <QLineF>
 #include <QBrush>
+#include <QList>
 
 namespace graph {
 Node::Node(QGraphicsScene *scene,
@@ -130,5 +131,16 @@ QString Node::toString() const {
 	string.append(QString::number(pos.x() + RADIUS) + ",");
 	string.append(QString::number(pos.y() + RADIUS));
 	return string;
+}
+
+QStringList Node::getNeighbourNodes() const {
+	QStringList nodes;
+	QList<Edge*> edges = set.values();
+	QList<Edge*>::iterator it;
+	for (it = edges.begin(); it != edges.end(); ++it) {
+		nodes.append((*it)->getNode()->getName());
+	}
+	nodes.sort();
+	return nodes;
 }
 }

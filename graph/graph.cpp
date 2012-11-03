@@ -7,6 +7,7 @@
 #include <QStringList>
 
 const char* const  graph::Graph::MAGICNUMBER = "GRAPH";
+const char* const  graph::Graph::RESULTSEPERATOR = "->";
 
 namespace graph {
 Graph::Graph(QGraphicsScene *scene)
@@ -214,5 +215,69 @@ void Graph::setEdgeColor(const QString &l, const QString &r, const QColor &color
 
 const QColor Graph::getEdgeColor(const QString &l, const QString &r) {
 	return map.value(l)->getEdgeColor(map.value(r));
+}
+
+void Graph::markNodePath(const QString &nodeString) {
+	QStringList nodes = nodeString.split(RESULTSEPERATOR);
+	QColor color(Qt::red);
+	//double increase = 255/(nodes.size()-1);
+	while (!nodes.isEmpty()) {
+		map.value(nodes.front())->setColor(color);
+		nodes.removeFirst();
+		//color.setGreenF(color.greenF()+increase);
+		color = color.lighter(115);
+	}
+}
+
+QStringList Graph::depthFirstSearch() {
+	QStringList nodes = map.keys();
+	nodes.sort();
+	QStringList results;
+	QStringList::iterator it;
+	for (it = nodes.begin(); it != nodes.end(); ++it) {	
+		QStringList visited;
+		depthFirstSearch(visited, *it);
+		results.append(visited.join(RESULTSEPERATOR));
+	}
+	return results;
+}
+
+void Graph::depthFirstSearch(QStringList &visited, const QString &name) {
+	visited.append(name);
+	Node *node = map.value(name);
+	QStringList neighbourNodes = node->getNeighbourNodes();
+	QStringList::iterator it;
+	for (it = neighbourNodes.begin(); it != neighbourNodes.end(); ++it) {
+		if (!visited.contains(*it)) {
+			depthFirstSearch(visited, *it);
+		}
+	}
+}
+
+QStringList Graph::breadthFirstSearch() {
+	QStringList nodes = map.keys();
+	nodes.sort();
+	QStringList results;
+	QStringList::iterator it;
+	for (it = nodes.begin(); it != nodes.end(); ++it) {	
+		QStringList visited;
+		QStringList toDo;
+		toDo.append(*it);
+		visited.append(*it);
+		while (!toDo.isEmpty()) {
+			QString node = toDo.front();
+			toDo.removeFirst();
+			QStringList neighbourNodes = map.value(node)->getNeighbourNodes();
+			QStringList::iterator it;
+			for (it = neighbourNodes.begin(); it != neighbourNodes.end(); ++it) {
+				if (!visited.contains(*it)) {
+					toDo.append(*it);
+					visited.append(*it);
+				}
+			}
+		}
+		results.append(visited.join("->"));
+	}
+	return results;
 }
 }

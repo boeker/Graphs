@@ -13,10 +13,13 @@
 #include <QColorDialog>
 #include <QMessageBox>
 #include <QKeySequence>
+#include <QStringList>
 #include "graph/exceptions/graphfileerror.h"
 
 
 MainWindow::MainWindow() {
+	resultDialog = new ResultDialog(this);
+
 	rbInsertNode = new QRadioButton(tr("Insert Node"));
 	rbInsertNode->setChecked(true);
 	rbRemoveNode = new QRadioButton(tr("Remove Node"));
@@ -46,8 +49,10 @@ MainWindow::MainWindow() {
 	connect(pbSelectNodeColor, SIGNAL(pressed()), this, SLOT(selectNodeColor()));
 	connect(pbSelectEdgeColor, SIGNAL(pressed()), this, SLOT(selectEdgeColor()));
 	connect(leSelectedNode, SIGNAL(textChanged(const QString &)), this, SLOT(newNodeSelected(const QString &)));
+	connect(resultDialog, SIGNAL(itemClicked(const QString &)), this, SLOT(selectedAlgorithmResult(const QString &)));
 
 	menuBar = new QMenuBar(this);
+
 	fileMenu = menuBar->addMenu(tr("File"));
 	newAction = new QAction(tr("New"), this);
 	newAction->setShortcuts(QKeySequence::New);
@@ -64,6 +69,14 @@ MainWindow::MainWindow() {
 	saveScreenshotAction = new QAction(tr("Save Screenshot"), this);
 	connect(saveScreenshotAction, SIGNAL(triggered()), this, SLOT(saveScreenshot()));
 	fileMenu->addAction(saveScreenshotAction);
+
+	algorithmMenu = menuBar->addMenu(tr("Algorithm"));
+	depthFirstSearchAction = new QAction(tr("Depth-first Search"), this);
+	connect(depthFirstSearchAction, SIGNAL(triggered()), this, SLOT(depthFirstSearch()));
+	algorithmMenu->addAction(depthFirstSearchAction);
+	breadthFirstSearchAction = new QAction(tr("Breadth-first Search"), this);
+	connect(breadthFirstSearchAction, SIGNAL(triggered()), this, SLOT(breadthFirstSearch()));
+	algorithmMenu->addAction(breadthFirstSearchAction);
 
 	QHBoxLayout *mainLayout = new QHBoxLayout;
 	QVBoxLayout *sideBarLayout = new QVBoxLayout;
@@ -121,6 +134,7 @@ MainWindow::MainWindow() {
 }
 
 MainWindow::~MainWindow() {
+	delete graph;
 }
 
 void MainWindow::gvLeftMousePress(const QPointF &pos) {
@@ -191,7 +205,9 @@ void MainWindow::selectNodeColor() {
 	if (!name.isEmpty()) {
 		QColor color;
 		color = QColorDialog::getColor(graph->getNodeColor(name), this, tr("Node Color"));
-		graph->setNodeColor(name, color);
+		if (color.isValid()) {
+			graph->setNodeColor(name, color);
+		}
 	}
 }
 
@@ -201,13 +217,19 @@ void MainWindow::selectEdgeColor() {
 	if (!lname.isEmpty() && !rname.isEmpty() && graph->edgeExists(lname, rname)) {
 		QColor color;
 		color = QColorDialog::getColor(graph->getEdgeColor(lname, rname), this, tr("Edge Color"));
-		graph->setEdgeColor(lname, rname, color);
+		if (color.isValid()) {
+			graph->setEdgeColor(lname, rname, color);
+		}
 	}
 }
 
 void MainWindow::newNodeSelected(const QString &name) {
 	leFromNode->setText(leToNode->text());
 	leToNode->setText(name);
+}
+
+void MainWindow::selectedAlgorithmResult(const QString &result) {
+	graph->markNodePath(result);
 }
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
@@ -241,6 +263,8 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
 void MainWindow::newGraph() {
 	delete graph;
 	graph = new graph::Graph(graphicsScene);
+	resultDialog->clearListWidget();
+	resultDialog->setVisible(false);
 }
 
 void MainWindow::saveScreenshot() {
@@ -264,6 +288,8 @@ void MainWindow::readFromFile() {
 			mb.setIcon(QMessageBox::Critical);
 			mb.exec();
 		}
+		resultDialog->clearListWidget();
+		resultDialog->setVisible(false);
 	}
 }
 
@@ -272,6 +298,24 @@ void MainWindow::writeToFile() {
 	if (!fileName.isNull()) {
 		graph->writeToFile(fileName);
 	}
+}
+
+void MainWindow::depthFirstSearch() {
+	QStringList list = graph->depthFirstSearch();
+	if (!resultDialog->isVisible()) {
+		resultDialog->show();
+	}
+	resultDialog->displayStringList(list);
+	resultDialog->setWindowTitle(tr("Algorithm: Depth-first search"));
+}
+
+void MainWindow::breadthFirstSearch() {
+	QStringList list = graph->breadthFirstSearch();
+	if (!resultDialog->isVisible()) {
+		resultDialog->show();
+	}
+	resultDialog->displayStringList(list);
+	resultDialog->setWindowTitle(tr("Algorithm: Breadth-first search"));
 }
 
 bool MainWindow::onlyLetters(const QString &string) {

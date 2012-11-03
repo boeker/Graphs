@@ -9,6 +9,7 @@
 #include <QGraphicsTextItem>
 #include <QPointF>
 #include <QColor>
+#include <QStringList>
 #include "edge.h"
 
 namespace graph {
@@ -29,6 +30,7 @@ public:
 	QColor getEdgeColor(Node *) const;
 	double getEdgeQuality(Node *) const;
 	QString toString() const;
+	QStringList getNeighbourNodes() const;
 private:
 	QSet<Edge*> set;
 	QString name;

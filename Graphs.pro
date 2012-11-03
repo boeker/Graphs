@@ -6,12 +6,14 @@ CONFIG += qt exceptions
 
 # Input
 HEADERS += mainwindow.h \
+           resultdialog.h \
            graph/edge.h \
            graph/graph.h \
            graph/node.h \
            graph/exceptions/graphfileerror.h
 SOURCES += main.cpp \
            mainwindow.cpp \
+           resultdialog.cpp \
            graph/edge.cpp \
            graph/graph.cpp \
            graph/node.cpp \
