@@ -135,6 +135,10 @@
         <source>Algorithm: Breadth-first search</source>
         <translation>Algorithmus: Breitendurchlauf</translation>
     </message>
+    <message>
+        <source>Save</source>
+        <translation>Speichern</translation>
+    </message>
 </context>
 <context>
     <name>QWidget</name>
