@@ -17,21 +17,16 @@ class MainWindow : public QWidget {
 public:
 	MainWindow();
 	~MainWindow();
-	void gvLeftMousePress(const QPointF &);
-	void gvLeftMouseRelease();
-	void gvMouseMove(const QPointF &);
-	void gvLeftMouseDoubleClick(const QPointF &);
-	void closeAlgorithmView();
-public slots:
-	void resetLastClick();
-	void selectNodeColor();
-	void selectEdgeColor();
-	void newNodeSelected(const QString &);
-	void selectedAlgorithmResult(const QString &);
-	void onResultDialogClose();
 protected:
 	bool eventFilter(QObject *, QEvent *);
-private slots:
+private:
+	void gvLeftMousePress(const QPointF &);
+	void gvLeftMouseRelease();
+	void gvLeftMouseDoubleClick(const QPointF &);
+	void gvMouseMove(const QPointF &);
+	void closeAlgorithmView();
+	bool onlyLetters(const QString &);
+public slots:
 	void newGraph();
 	void saveScreenshot();
 	void readFromFile();
@@ -39,9 +34,14 @@ private slots:
 	void writeToLastFile();
 	void depthFirstSearch();
 	void breadthFirstSearch();
+private slots:
+	void resetLastClick();
+	void selectNodeColor();
+	void selectEdgeColor();
+	void newNodeSelected(const QString &);
+	void selectedAlgorithmResult(const QString &);
+	void onResultDialogClose();
 private:
-	bool onlyLetters(const QString &);
-
 	ResultDialog *resultDialog;
 
 	QMenuBar *menuBar;
@@ -61,19 +61,25 @@ private:
 	QRadioButton *rbRemoveNode;
 	QRadioButton *rbInsertEdge;
 	QRadioButton *rbRemoveEdge;
+
 	QLineEdit *leNextNodeName;
 	QLineEdit *leNextEdgeQuality;
+
 	QLineEdit *leSelectedNode;
+	QPushButton *pbSelectNodeColor;
+
 	QLineEdit *leFromNode;
 	QLineEdit *leToNode;
-	QPushButton *pbSelectNodeColor;
 	QPushButton *pbSelectEdgeColor;
+
 	QGraphicsView *graphicsView;
 	QGraphicsScene *graphicsScene;
-	graph::Graph *graph;
-	QString lastClick; //For implementing the double click actions
-	QString grabbedNode; //For implementing node relocating
+
+	QString lastClick;
+	QString grabbedNode;
 	QString lastFilePath;
+
+	graph::Graph *graph;
 };
 
 #endif

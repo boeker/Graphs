@@ -16,12 +16,14 @@ class Edge {
 public:
 	Edge(QGraphicsScene *, Node *, const QLineF &, double);
 	Edge(Edge *, Node *);
-	Node* getNode();
-	void removeFromScene();
+
 	void moveTo(const QLineF &);
 	void setColor(const QColor &);
 	QColor getColor() const;
 	double getQuality() const;
+	
+	Node* getNode();
+	void removeFromScene();
 private:
 	QPointF qualityTextPoint(const QLineF &);
 	QGraphicsScene *scene;

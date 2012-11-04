@@ -23,17 +23,6 @@ Edge::Edge(Edge *edge, Node *node)
 	  quality(edge->quality) {
 }
 
-Node* Edge::getNode() {
-	return node;
-}
-
-void Edge::removeFromScene() {
-	lineItem->scene()->removeItem(lineItem);
-	delete lineItem;
-	textItem->scene()->removeItem(textItem);
-	delete textItem;
-}
-
 void Edge::moveTo(const QLineF &linePos) {
 	lineItem->setLine(linePos);
 	textItem->setPos(qualityTextPoint(linePos));
@@ -57,5 +46,16 @@ QColor Edge::getColor() const {
 
 double Edge::getQuality() const {
 	return quality;
+}
+
+Node* Edge::getNode() {
+	return node;
+}
+
+void Edge::removeFromScene() {
+	lineItem->scene()->removeItem(lineItem);
+	delete lineItem;
+	textItem->scene()->removeItem(textItem);
+	delete textItem;
 }
 }

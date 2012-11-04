@@ -163,6 +163,48 @@ void Graph::moveNodeTo(const QString &name, const QPointF &pos) {
 	map.value(name)->moveTo(pos);
 }
 
+QString Graph::getNodeAt(const QPointF &pos) { //probably slow
+	QGraphicsItem *item = scene->itemAt(pos);
+	const QList<Node*> nodeList = map.values();
+	QList<Node*>::const_iterator it;
+	for (it = nodeList.constBegin(); it != nodeList.constEnd(); ++it) {
+		if ((*it)->hasItem(item)) {
+			return (*it)->getName();
+			break;
+		}
+	}
+	return QString("");
+}
+
+void Graph::setNodeZValue(const QString &name, const qreal &val) {
+	map.value(name)->setZValue(val);
+}
+
+void Graph::setNodeColor(const QString &name, const QColor &color) {
+	map.value(name)->setColor(color);
+}
+
+const QColor Graph::getNodeColor(const QString &name) const {
+	return map.value(name)->getColor();
+}
+
+void Graph::markNodePath(const QString &nodeString) {
+	clearNodePath();
+	QStringList nodes = nodeString.split(RESULTSEPERATOR);
+	int i = 1;
+	while (!nodes.isEmpty()) {
+		map.value(nodes.front())->setNumber(i++);
+		nodes.removeFirst();
+	}
+}
+
+void Graph::clearNodePath() {
+	QList<Node*> nodes = map.values();
+	QList<Node*>::iterator it;
+	for (it = nodes.begin(); it != nodes.end(); ++it) {
+		(*it)->clearNumber();
+	}
+}
 void Graph::addEdge(const QString &l, const QString &r, double quality) {
 	if (map.value(l)->getEdgeTo(map.value(r)) == 0) {
 		map.value(l)->addEdge(map.value(r), quality);
@@ -184,55 +226,12 @@ bool Graph::edgeExists(const QString &l, const QString &r) {
 	}
 }
 
-QString Graph::getNodeAt(const QPointF &pos) { //probably slow
-	QGraphicsItem *item = scene->itemAt(pos);
-	const QList<Node*> nodeList = map.values();
-	QList<Node*>::const_iterator it;
-	for (it = nodeList.constBegin(); it != nodeList.constEnd(); ++it) {
-		if ((*it)->hasItem(item)) {
-			return (*it)->getName();
-			break;
-		}
-	}
-	return QString("");
-}
-
-void Graph::setZValue(const QString &name, const qreal &val) {
-	map.value(name)->setZValue(val);
-}
-
-void Graph::setNodeColor(const QString &name, const QColor &color) {
-	map.value(name)->setColor(color);
-}
-
-const QColor Graph::getNodeColor(const QString &name) const {
-	return map.value(name)->getColor();
-}
-
 void Graph::setEdgeColor(const QString &l, const QString &r, const QColor &color) {
 	map.value(l)->setEdgeColor(map.value(r), color);
 }
 
 const QColor Graph::getEdgeColor(const QString &l, const QString &r) {
 	return map.value(l)->getEdgeColor(map.value(r));
-}
-
-void Graph::markNodePath(const QString &nodeString) {
-	clearNodePath();
-	QStringList nodes = nodeString.split(RESULTSEPERATOR);
-	int i = 1;
-	while (!nodes.isEmpty()) {
-		map.value(nodes.front())->setNumber(i++);
-		nodes.removeFirst();
-	}
-}
-
-void Graph::clearNodePath() {
-	QList<Node*> nodes = map.values();
-	QList<Node*>::iterator it;
-	for (it = nodes.begin(); it != nodes.end(); ++it) {
-		(*it)->clearNumber();
-	}
 }
 
 QStringList Graph::depthFirstSearch() {

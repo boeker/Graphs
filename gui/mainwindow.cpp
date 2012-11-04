@@ -14,7 +14,7 @@
 #include <QMessageBox>
 #include <QKeySequence>
 #include <QStringList>
-#include "graph/exceptions/graphfileerror.h"
+#include "../graph/exceptions/graphfileerror.h"
 
 
 MainWindow::MainWindow() {
@@ -143,6 +143,34 @@ MainWindow::~MainWindow() {
 	delete graph;
 }
 
+bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
+    if (event->type() == QEvent::GraphicsSceneMousePress) {
+    	QGraphicsSceneMouseEvent *ev = static_cast<QGraphicsSceneMouseEvent*>(event);
+    	if (ev->button() == Qt::LeftButton) {
+    		gvLeftMousePress(ev->buttonDownScenePos(Qt::LeftButton));
+    	}
+        return true;
+    } else if (event->type() == QEvent::GraphicsSceneMouseRelease) {
+    	QGraphicsSceneMouseEvent *ev = static_cast<QGraphicsSceneMouseEvent*>(event);
+    	if (ev->button() == Qt::LeftButton) {
+    		gvLeftMouseRelease();
+    	}
+        return true;
+    } else if (event->type() == QEvent::GraphicsSceneMouseDoubleClick) {
+    	QGraphicsSceneMouseEvent *ev = static_cast<QGraphicsSceneMouseEvent*>(event);
+    	if (ev->button() == Qt::LeftButton) {
+    		gvLeftMouseDoubleClick(ev->buttonDownScenePos(Qt::LeftButton));
+    	}
+    	return true;
+    } else if (event->type() == QEvent::GraphicsSceneMouseMove) {
+    	QGraphicsSceneMouseEvent *ev = static_cast<QGraphicsSceneMouseEvent*>(event);
+    	gvMouseMove(ev->scenePos());
+    	return true;
+    } else {
+        return QObject::eventFilter(obj, event);
+    }
+}
+
 void MainWindow::gvLeftMousePress(const QPointF &pos) {
 	grabbedNode = graph->getNodeAt(pos);
 	if (!grabbedNode.isEmpty()) {
@@ -152,12 +180,6 @@ void MainWindow::gvLeftMousePress(const QPointF &pos) {
 
 void MainWindow::gvLeftMouseRelease() {
 	grabbedNode.clear();
-}
-
-void MainWindow::gvMouseMove(const QPointF &pos) {
-	if (!grabbedNode.isEmpty()) {
-		graph->moveNodeTo(grabbedNode, pos);
-	}
 }
 
 void MainWindow::gvLeftMouseDoubleClick(const QPointF &pos) {
@@ -210,77 +232,25 @@ void MainWindow::gvLeftMouseDoubleClick(const QPointF &pos) {
 	}
 }
 
+void MainWindow::gvMouseMove(const QPointF &pos) {
+	if (!grabbedNode.isEmpty()) {
+		graph->moveNodeTo(grabbedNode, pos);
+	}
+}
+
 void MainWindow::closeAlgorithmView() {
 	resultDialog->clearListWidget();
 	resultDialog->setVisible(false);
 }
 
-void MainWindow::resetLastClick() {
-	lastClick.clear();
-}
-
-void MainWindow::selectNodeColor() {
-	QString name = leSelectedNode->text();
-	if (!name.isEmpty()) {
-		QColor color;
-		color = QColorDialog::getColor(graph->getNodeColor(name), this, tr("Node Color"));
-		if (color.isValid()) {
-			graph->setNodeColor(name, color);
+bool MainWindow::onlyLetters(const QString &string) {
+	bool result = true;
+	for (int i = 0; i < string.length(); ++i) {
+		if (!string[i].isLetter()) {
+			result = false;
 		}
 	}
-}
-
-void MainWindow::selectEdgeColor() {
-	QString lname = leFromNode->text();
-	QString rname = leToNode->text();
-	if (!lname.isEmpty() && !rname.isEmpty() && graph->edgeExists(lname, rname)) {
-		QColor color;
-		color = QColorDialog::getColor(graph->getEdgeColor(lname, rname), this, tr("Edge Color"));
-		if (color.isValid()) {
-			graph->setEdgeColor(lname, rname, color);
-		}
-	}
-}
-
-void MainWindow::newNodeSelected(const QString &name) {
-	leFromNode->setText(leToNode->text());
-	leToNode->setText(name);
-}
-
-void MainWindow::selectedAlgorithmResult(const QString &result) {
-	graph->markNodePath(result);
-}
-
-void MainWindow::onResultDialogClose() {
-	graph->clearNodePath();
-}
-
-bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
-    if (event->type() == QEvent::GraphicsSceneMousePress) {
-    	QGraphicsSceneMouseEvent *ev = static_cast<QGraphicsSceneMouseEvent*>(event);
-    	if (ev->button() == Qt::LeftButton) {
-    		gvLeftMousePress(ev->buttonDownScenePos(Qt::LeftButton));
-    	}
-        return true;
-    } else if (event->type() == QEvent::GraphicsSceneMouseRelease) {
-    	QGraphicsSceneMouseEvent *ev = static_cast<QGraphicsSceneMouseEvent*>(event);
-    	if (ev->button() == Qt::LeftButton) {
-    		gvLeftMouseRelease();
-    	}
-        return true;
-    } else if (event->type() == QEvent::GraphicsSceneMouseDoubleClick) {
-    	QGraphicsSceneMouseEvent *ev = static_cast<QGraphicsSceneMouseEvent*>(event);
-    	if (ev->button() == Qt::LeftButton) {
-    		gvLeftMouseDoubleClick(ev->buttonDownScenePos(Qt::LeftButton));
-    	}
-    	return true;
-    } else if (event->type() == QEvent::GraphicsSceneMouseMove) {
-    	QGraphicsSceneMouseEvent *ev = static_cast<QGraphicsSceneMouseEvent*>(event);
-    	gvMouseMove(ev->scenePos());
-    	return true;
-    } else {
-        return QObject::eventFilter(obj, event);
-    }
+	return result;
 }
 
 void MainWindow::newGraph() {
@@ -303,6 +273,8 @@ void MainWindow::readFromFile() {
 	if (!fileName.isNull()) {
 		try {
 			graph->readFromFile(fileName);
+			saveAction->setEnabled(true);
+			lastFilePath = fileName;
 		} catch (graph::GraphFileError &e) {
 			graph->clear();
 			QMessageBox mb;
@@ -351,12 +323,42 @@ void MainWindow::breadthFirstSearch() {
 	resultDialog->setWindowTitle(tr("Algorithm: Breadth-first search"));
 }
 
-bool MainWindow::onlyLetters(const QString &string) {
-	bool result = true;
-	for (int i = 0; i < string.length(); ++i) {
-		if (!string[i].isLetter()) {
-			result = false;
+void MainWindow::resetLastClick() {
+	lastClick.clear();
+}
+
+void MainWindow::selectNodeColor() {
+	QString name = leSelectedNode->text();
+	if (!name.isEmpty()) {
+		QColor color;
+		color = QColorDialog::getColor(graph->getNodeColor(name), this, tr("Node Color"));
+		if (color.isValid()) {
+			graph->setNodeColor(name, color);
 		}
 	}
-	return result;
+}
+
+void MainWindow::selectEdgeColor() {
+	QString lname = leFromNode->text();
+	QString rname = leToNode->text();
+	if (!lname.isEmpty() && !rname.isEmpty() && graph->edgeExists(lname, rname)) {
+		QColor color;
+		color = QColorDialog::getColor(graph->getEdgeColor(lname, rname), this, tr("Edge Color"));
+		if (color.isValid()) {
+			graph->setEdgeColor(lname, rname, color);
+		}
+	}
+}
+
+void MainWindow::newNodeSelected(const QString &name) {
+	leFromNode->setText(leToNode->text());
+	leToNode->setText(name);
+}
+
+void MainWindow::selectedAlgorithmResult(const QString &result) {
+	graph->markNodePath(result);
+}
+
+void MainWindow::onResultDialogClose() {
+	graph->clearNodePath();
 }
