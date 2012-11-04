@@ -5,9 +5,9 @@
 
 namespace graph {
 Edge::Edge(QGraphicsScene *scene, Node *node, const QLineF &linePos, double quality)
-	: scene(scene),
-	  node(node),
-	  quality(quality) {
+	: node(node),
+	  quality(quality),
+	  scene(scene) {
 	lineItem = scene->addLine(linePos);
 	lineItem->setZValue(-1);
 	textItem = scene->addText(QString::number(quality));
@@ -16,11 +16,11 @@ Edge::Edge(QGraphicsScene *scene, Node *node, const QLineF &linePos, double qual
 }
 
 Edge::Edge(Edge *edge, Node *node)
-	: scene(edge->scene),
-	  node(node),
+	: node(node),
+	  quality(edge->quality),
+	  scene(edge->scene),
 	  lineItem(edge->lineItem),
-	  textItem(edge->textItem),
-	  quality(edge->quality) {
+	  textItem(edge->textItem) {
 }
 
 void Edge::moveTo(const QLineF &linePos) {

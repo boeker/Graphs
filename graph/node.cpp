@@ -10,8 +10,6 @@ Node::Node(QGraphicsScene *scene,
 							 const QString &name,
 							 const QPointF &pos)
 	: name(name),
-	graphicsItem(graphicsItem),
-	textItem(textItem),
 	scene(scene) {
 		graphicsItem = scene->addEllipse(0, 0, RADIUS*2, RADIUS*2);
 		graphicsItem->setBrush(Qt::white);
@@ -48,12 +46,39 @@ QString Node::getName() const {
 	return name;
 }
 
-bool Node::hasItem(QGraphicsItem *item) {
-	if (item == graphicsItem || item == textItem || item == numberTextItem) {
-		return true;
-	} else {
-		return false;
+void Node::setZValue(const qreal &val) {
+	graphicsItem->setZValue(val);
+	textItem->setZValue(val);
+}
+
+void Node::moveTo(const QPointF &pos) {
+	graphicsItem->setPos(pos.x()-RADIUS, pos.y()-RADIUS);
+	textItem->setPos(pos.x()-TEXTSHIFTX, pos.y()-TEXTSHIFTY);
+	numberTextItem->setPos(textItem->x()-1.5f, textItem->y()+11.0f);
+	QSet<Edge*>::iterator it;
+	for (it = set.begin(); it != set.end(); ++it) {
+		QLineF linepos;
+		linepos.setP1(pos);
+		QPointF toPos = (*it)->getNode()->graphicsItem->scenePos();
+		linepos.setP2(QPointF(toPos.x()+RADIUS, toPos.y()+RADIUS));
+		(*it)->moveTo(linepos);
 	}
+}
+
+void Node::setColor(const QColor &color) {
+	graphicsItem->setBrush(color);
+}
+
+QColor Node::getColor() const {
+	return graphicsItem->brush().color();
+}
+
+void Node::setNumber(int number) {
+	numberTextItem->setPlainText(QString::number(number));
+}
+
+void Node::clearNumber() {
+	numberTextItem->setPlainText("");
 }
 
 void Node::addEdge(Node *to, double quality) {
@@ -82,33 +107,6 @@ void Node::removeEdge(Node *to, bool removeFromScene) {
 		edge->removeFromScene();
 	}
 	delete edge;
-}
-
-void Node::setZValue(const qreal &val) {
-	graphicsItem->setZValue(val);
-	textItem->setZValue(val);
-}
-
-void Node::moveTo(const QPointF &pos) {
-	graphicsItem->setPos(pos.x()-RADIUS, pos.y()-RADIUS);
-	textItem->setPos(pos.x()-TEXTSHIFTX, pos.y()-TEXTSHIFTY);
-	numberTextItem->setPos(textItem->x()-1.5f, textItem->y()+11.0f);
-	QSet<Edge*>::iterator it;
-	for (it = set.begin(); it != set.end(); ++it) {
-		QLineF linepos;
-		linepos.setP1(pos);
-		QPointF toPos = (*it)->getNode()->graphicsItem->scenePos();
-		linepos.setP2(QPointF(toPos.x()+RADIUS, toPos.y()+RADIUS));
-		(*it)->moveTo(linepos);
-	}
-}
-
-void Node::setColor(const QColor &color) {
-	graphicsItem->setBrush(color);
-}
-
-QColor Node::getColor() const {
-	return graphicsItem->brush().color();
 }
 
 void Node::setEdgeColor(Node *node, const QColor &color) {
@@ -153,11 +151,11 @@ QStringList Node::getNeighbourNodes() const {
 	return nodes;
 }
 
-void Node::setNumber(int number) {
-	numberTextItem->setPlainText(QString::number(number));
-}
-
-void Node::clearNumber() {
-	numberTextItem->setPlainText("");
+bool Node::hasItem(QGraphicsItem *item) {
+	if (item == graphicsItem || item == textItem || item == numberTextItem) {
+		return true;
+	} else {
+		return false;
+	}
 }
 }

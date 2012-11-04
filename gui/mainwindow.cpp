@@ -323,10 +323,6 @@ void MainWindow::breadthFirstSearch() {
 	resultDialog->setWindowTitle(tr("Algorithm: Breadth-first search"));
 }
 
-void MainWindow::resetLastClick() {
-	lastClick.clear();
-}
-
 void MainWindow::selectNodeColor() {
 	QString name = leSelectedNode->text();
 	if (!name.isEmpty()) {
@@ -348,6 +344,10 @@ void MainWindow::selectEdgeColor() {
 			graph->setEdgeColor(lname, rname, color);
 		}
 	}
+}
+
+void MainWindow::resetLastClick() {
+	lastClick.clear();
 }
 
 void MainWindow::newNodeSelected(const QString &name) {

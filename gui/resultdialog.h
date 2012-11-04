@@ -12,6 +12,7 @@ class ResultDialog : public QDialog {
 public:
 	ResultDialog(QWidget * = 0, Qt::WindowFlags = 0);
 	~ResultDialog();
+	
 	void displayStringList(const QStringList &);
 	void clearListWidget();
 private slots:

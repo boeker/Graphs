@@ -17,29 +17,35 @@ class Node {
 public:
 	Node(QGraphicsScene *, const QString &, const QPointF &);
 	~Node();
+
 	QString getName() const;
-	bool hasItem(QGraphicsItem *);
-	void addEdge(Node *, double);
-	Edge* getEdgeTo(Node *) const;
-	void removeEdge(Node *, bool = false);
 	void setZValue(const qreal &);
 	void moveTo(const QPointF &);
 	void setColor(const QColor &);
 	QColor getColor() const;
+	void setNumber(int);
+	void clearNumber();
+
+	void addEdge(Node *, double);
+	Edge* getEdgeTo(Node *) const;
+	void removeEdge(Node *, bool = false);
 	void setEdgeColor(Node *, const QColor &);
 	QColor getEdgeColor(Node *) const;
 	double getEdgeQuality(Node *) const;
+
 	QString toString() const;
 	QStringList getNeighbourNodes() const;
-	void setNumber(int);
-	void clearNumber();
+	bool hasItem(QGraphicsItem *);
 private:
-	QSet<Edge*> set;
 	QString name;
+
+	QSet<Edge*> set;
+
+	QGraphicsScene *scene;
 	QGraphicsEllipseItem *graphicsItem;
 	QGraphicsTextItem *textItem;
 	QGraphicsTextItem *numberTextItem;
-	QGraphicsScene *scene;
+
 	static const int RADIUS = 20;
 #if defined Q_WS_WIN
 	static const double TEXTSHIFTY = 10.5f;

@@ -26,11 +26,14 @@ public:
 	void removeFromScene();
 private:
 	QPointF qualityTextPoint(const QLineF &);
-	QGraphicsScene *scene;
+private:
 	Node *node;
+	
+	double quality;
+
+	QGraphicsScene *scene;
 	QGraphicsLineItem *lineItem;
 	QGraphicsTextItem *textItem;
-	double quality;
 };
 }
 

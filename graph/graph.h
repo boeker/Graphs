@@ -40,10 +40,12 @@ public:
 private:
 	void depthFirstSearch(QStringList &,const QString &);
 private:
+	QMap<QString,Node*> map;
+
+	QGraphicsScene *scene;
+
 	static const char* const MAGICNUMBER;
 	static const char* const RESULTSEPERATOR;
-	QMap<QString,Node*> map;
-	QGraphicsScene *scene;
 };
 }
 

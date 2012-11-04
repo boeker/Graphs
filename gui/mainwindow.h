@@ -24,7 +24,9 @@ private:
 	void gvLeftMouseRelease();
 	void gvLeftMouseDoubleClick(const QPointF &);
 	void gvMouseMove(const QPointF &);
+
 	void closeAlgorithmView();
+
 	bool onlyLetters(const QString &);
 public slots:
 	void newGraph();
@@ -32,13 +34,16 @@ public slots:
 	void readFromFile();
 	void writeToFile();
 	void writeToLastFile();
+
 	void depthFirstSearch();
 	void breadthFirstSearch();
 private slots:
-	void resetLastClick();
 	void selectNodeColor();
 	void selectEdgeColor();
+
+	void resetLastClick();
 	void newNodeSelected(const QString &);
+
 	void selectedAlgorithmResult(const QString &);
 	void onResultDialogClose();
 private:
