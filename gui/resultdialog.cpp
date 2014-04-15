@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Jan Böker
+// MIT License
+
 #include "resultdialog.h"
 
 #include <QHBoxLayout>

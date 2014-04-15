@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Jan Böker
+// MIT License
+
 #ifndef GRAPH_EDGE_H
 #define GRAPH_EDGE_H
 

@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Jan Böker
+// MIT License
+
 #ifndef RESULTDIALOG_H
 #define RESULTDIALOG_H
 

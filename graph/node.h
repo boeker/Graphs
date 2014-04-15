@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Jan Böker
+// MIT License
+
 #ifndef GRAPH_NODE_H
 #define GRAPH_NODE_H
 

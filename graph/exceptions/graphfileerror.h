@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Jan Böker
+// MIT License
+
 #ifndef GRAPH_EXCEPTIONS_GRAPHFILERROR
 #define GRAPH_EXCEPTIONS_GRAPHFILERROR
 

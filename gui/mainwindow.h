@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Jan Böker
+// MIT License
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
